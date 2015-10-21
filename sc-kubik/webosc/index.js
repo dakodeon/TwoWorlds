@@ -19,9 +19,9 @@ var clientsConnected = 0;
 app.use(express.static(__dirname + '/public'));
 
 oscListener = udp.createSocket("udp4", function(buf, rinfo) {
-  // try {
-    //io.sockets.emit('osc', osc.fromBuffer(msg));
+    
     var msg = osc.fromBuffer(buf);
+    
     // *** Sending message to specific tiddly socket if the address is /url
     if (msg.address == "/url") {
 	console.log("OSC > Browser: " + msg.address + ": " + msg.args[0].value + " | " + msg.args[1].value);
@@ -31,11 +31,21 @@ oscListener = udp.createSocket("udp4", function(buf, rinfo) {
 	    io.sockets.connected[msg.args[0].value].emit('message', msg.args[1].value);
 	}
     }
-    // console.log(colors.green("OSC > Browser: " + JSON.stringify(msg)));
-    
-  // } catch (e) {
-  //   return console.log(colors.red("invalid OSC packet:" + e));
-  // }
+
+    // *** Change the IP address
+    else if (msg.address == "/ip") {
+        config.osc.address = msg.args[0].value;
+        console.log("The IP changed to: " + config.osc.address);
+        var oscReply = {
+	    address: '/gotit',
+	    args: [
+		"Hello, SC"
+	    ]
+	};
+        
+        oscReply = osc.toBuffer(oscReply);
+        oscEmmiter.send(oscReply, 0, oscReply.length, config.osc.port.out, config.osc.address);
+    }
 });
 
 oscListener.bind(config.osc.port.in);
