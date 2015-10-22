@@ -2,6 +2,7 @@ var colors = require('colors');
 var express = require('express');
 var osc = require('osc-min');
 var udp = require("dgram");
+var publicIp = require('public-ip');
 
 var config = require("./config.json");
 
@@ -9,6 +10,7 @@ var app = express();
 
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var dns = require('dns');
 
 var oscListener;
 
@@ -18,6 +20,29 @@ var clientsConnected = 0;
 
 app.use(express.static(__dirname + '/public'));
 
+oscEmmiter = udp.createSocket("udp4");
+
+publicIp.v4(function (err, ip) {
+    console.log('My IP is ' + ip);
+    // dns.lookup('larigot.avarts.ionio.gr', function onLookup(err, addresses, family) {
+        // console.log('Resolving address...');
+        // config.osc.address = addresses;
+        // console.log('The IP address is ' + config.osc.address);
+        var oscMsg = {
+            address: '/ip',
+            args: [
+                ip
+            ]
+        };
+        oscMsg = osc.toBuffer(oscMsg);
+        oscEmmiter.send(oscMsg, 0, oscMsg.length, config.osc.port.out, config.osc.address);
+    // });
+});
+
+
+
+
+
 oscListener = udp.createSocket("udp4", function(buf, rinfo) {
     
     var msg = osc.fromBuffer(buf);
@@ -25,8 +50,6 @@ oscListener = udp.createSocket("udp4", function(buf, rinfo) {
     // *** Sending message to specific tiddly socket if the address is /url
     if (msg.address == "/url") {
 	console.log("OSC > Browser: " + msg.address + ": " + msg.args[0].value + " | " + msg.args[1].value);
-	// *** Alternate way - didn't work
-	// io.to(msg.args[0].value).emit('message', 'Hey Bro!');
 	if (io.sockets.connected[msg.args[0].value]) {
 	    io.sockets.connected[msg.args[0].value].emit('message', msg.args[1].value);
 	}
@@ -46,11 +69,12 @@ oscListener = udp.createSocket("udp4", function(buf, rinfo) {
         oscReply = osc.toBuffer(oscReply);
         oscEmmiter.send(oscReply, 0, oscReply.length, config.osc.port.out, config.osc.address);
     }
+    else if (msg.address == "/gotit") {
+        console.log(msg.args[0].value);
+    }
 });
 
 oscListener.bind(config.osc.port.in);
-
-oscEmmiter = udp.createSocket("udp4");
 
 io.on('connection', function (websocket) {
 
@@ -58,16 +82,6 @@ io.on('connection', function (websocket) {
     console.log("A client just connected: " + websocket.id);
     clientsConnected++;
     io.sockets.emit('users', clientsConnected);
-
-    // // *** debugging -- send socket ID to supercollider
-    // var idOsc = {
-    //     address: '/tiddler',
-    //     args: [
-    //         websocket.id
-    //     ]
-    // };
-    // idOsc = osc.toBuffer(idOsc);
-    // oscEmmiter.send(idOsc, 0, idOsc.length, config.osc.port.out, "192.168.77.122"); // *** the IP will probably need to change
 
     // *** Receive info from tiddlywiki
     websocket.on('tiddler info', function (msg) {
