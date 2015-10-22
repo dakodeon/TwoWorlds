@@ -1,0 +1,50 @@
+* TiddlyWiki modified actions
+
+path: /usr/local/lib/node_modules/tiddlywiki/core/modules/widgets
+
+** action-navigate2.js
+
+Modified from original action-navigate.js
+
+Arguments:
+- $id: The title of the tiddler
+- $path: The path of the tiddlers content
+- $dimension: The orientation of the photo (portrait or landscape)
+
+It composes a URL consisting of the actual link to the PirateBox chat room and an HTTP query string, containing the above arguments, as well as the current URL.
+
+It's purpose is to navigate the user to the PirateBox chat room while displaying user-specified context, also giving the oportunity to find the page intact while returning to TiddlyWiki
+
+=================================================================
+
+** action-socketSend.js
+
+Arguments:
+- $type: Variable to know whether the function was invoked from a keyword or a tiddler
+- $val: The keyword or the title of the tiddler
+
+It uses Socket.io.js to send the arguments to the main Node.js server of Secret School, as well as the current URL.
+
+The information sent is used to create an OSC message in the server and send it to SuperCollider.
+
+=================================================================
+
+
+* TiddlyWiki extra system tiddlers
+
+path: ~/Dev/secretschoolwiki/pages/tiddlers
+
+** $:/myJS/include socket.io
+
+
+A script tag to include the Socket.io.js source
+
+=================================================================
+
+** $:/myJS/tiddlySocket
+
+A script tag to include the tiddlySocket.js function.
+
+This function receives a Socket.io message from the Node.js server and updates the current URL to display new content received as part of the message.
+
+=================================================================

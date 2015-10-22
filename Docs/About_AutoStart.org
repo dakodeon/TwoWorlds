@@ -1,0 +1,26 @@
+* ABOUT AUTOSTART
+
+There are three types of autostart used:
+
+** Run a script at boot
+
+Both Node.js instances are run this way (=webosc= and =piratebox=)
+
+This is done by placing a script file in =/etc/init.d=.
+
+Also relevant here is the auto login option:
+This can be found in the file: =/etc/inittab=. From the same file we start two terminal instances (=tty1= and =tty2=).
+
+** Run a script at user login
+
+This is used to start Supercollider in =tty2=.
+
+It is done by adding the relevant code in the file =~/.bashrc=.
+
+** Start a program in Desktop
+
+This is used to autostart the web browser with the secret school home page.
+
+Note: We are using LXDE Desktop.
+
+Add the relevant code in the file =/etc/xdg/lxsession/LXDE/autostart= or in =/etc/xdg/lxsession/LXDE-pi/autostart=. Not sure which one it is.

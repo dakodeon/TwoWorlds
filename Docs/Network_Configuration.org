@@ -1,0 +1,67 @@
+* NETWORK CONFIGURATION
+
+At this point, you should have your WiFi dongle plugged on your Pi.
+
+1. Edit the file =/etc/network/interfaces=
+Alter the lines that refer to =wlan0= to be as such:
+#+BEGIN_SRC sh
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+#+END_SRC
+
+2. Edit the file =/etc/wpa_supplicant/wpa_supplicant= to include your wireless network
+Add the following:
+#+BEGIN_SRC sh
+network={
+ssid="YOUR_NETWORK_NAME"
+psk="YOUR_NETWORK_PASSWORD"
+proto=RSN
+key_mgmt=WPA-PSK
+pairwise=CCMP
+auth_alg=OPEN
+}
+#+END_SRC
+
+The parameters are network specific:
+- =ssid= is the name of your network
+- =psk= is the password for your network
+- =proto= could be either =RSN= (WPA2) or =WPA= (WPA1)
+- =key_mgmt= could be either =WPA-PSK= (most probably) or =WPA-EAP= (enterprise networks)
+- =pairwise= could be either =CCMP= (WPA2) or =TKIP= (WPA1)
+- =auth_alg= is most probably =OPEN=, other options are =LEAP= and =SHARED=
+
+You can evaluate =sudo iwlist wlan0 scan= to check out useful information about your network, like what type of security does it use (WPA2 or WPA1).
+
+3. Reboot WiFi
+Evaluate these commands:
+=sudo ifdown wlan0=
+=sudo ifup wlan0=
+
+If everything is OK, it should automatically connect to your network.
+
+4. Configure a static IP
+To complete this step, you have to be already connected to your network.
+- Run =ifconfig=. Write down the following information:
+-- =inet addr=
+-- =Bcast=
+-- =Mask=
+- Run =netstat -nr | grep wlan0=. Write down the following information:
+-- =Gateway=
+-- =Destination=
+- Edit the file =/etc/network/interfaces=
+Alter the lines that refer to =wlan0= as such, using the gathered information:
+#+BEGIN_SRC sh
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet static
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+address <inet addr>
+netmask <Mask>
+network <Destination>
+broadcast <Bcast>
+gateway <Gateway>
+#+END_SRC
+
+Repeat step 3.

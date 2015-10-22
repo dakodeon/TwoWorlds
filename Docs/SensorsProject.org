@@ -1,0 +1,38 @@
+* COMPONENTS CONNECTIONS
+
+** RASPBERRY PI
+
+1. POWER:
+- 3.3V (PIN 01) => YELLOW WIRE
+- 5V (PIN 02) => RED WIRE
+- GND (PINS 06, 09) => BLACK WIRE
+
+2. SPI:
+- SPI_MOSI (PIN 19) => BLUE WIRE
+- SPI_MISO (PIN 21) => YELLOW WIRE
+- SPI_CLK (PIN 23) => RED WIRE
+- SPI_CE0_N (PIN 24) => GREEN WIRE
+
+** MCP3004
+
+- Vdd, Vref => 3.3V
+- AGND, DGND => GND
+- CLK => SPI_CLK
+- Dout => SPI_MISO
+- Din => SPI_MOSI
+- CS/SHDN => SPI_CE0_N
+
+** SHARP IR SENSOR
+
+- YELLOW WIRE => MCP3004 INPUT CHANNEL
+- BLACK WIRE => GND
+- RED WIRE => 5V
+
+** ONLINE REFERENCE
+
+- Raspberry Pi GPIO Pinout
+http://www.element14.com/community/docs/DOC-73950/l/raspberry-pi-2-model-b-gpio-40-pin-block-pinout
+
+- MCP3004 datasheet
+https://www.adafruit.com/datasheets/MCP3008.pdf
+
