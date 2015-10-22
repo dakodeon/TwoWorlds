@@ -1,0 +1,11 @@
+Extra files for connecting tiddlywiki with socket.io
+
+Widgets
+Move widgets content at:
+/usr/local/lib/node_modules/tiddlywiki/core/modules/widgets/
+
+Tiddlers
+Move tiddlers content at:
+<your tiddlywiki folder>/pages/tiddlers/
+
+Note that these tiddlers call JavaScript functions that are stored somewhere in your server home folder. You should edit these files so that the paths match.
