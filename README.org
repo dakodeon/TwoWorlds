@@ -78,7 +78,7 @@ File containing OSC and HTML ports and addresses.
 The Node.js server. Except for serving the homepage, it contains functions to traffic OSC messages between the webpage and SuperCollider.
 - /Note that it is not ready yet. The functions need to change according to the final needs of the project./
 
-** public
+*** public
 
 Here is the home folder of the website. It will contain the homepage (as =index.html=). It also contains a folder with the JavaScript functions that are called by the extra tiddlers.
 
