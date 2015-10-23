@@ -1,0 +1,85 @@
+* TWO WORLDS
+
+** Docs
+
+Contains various pieces of documentation:
+
+- [[[[file:Docs/About_AutoStart.org]]]]
+
+Contains information about autostarting applications in Raspberry Pi in various ways.
+
+- [[[[file:Docs/Components_Conections.org]]]]
+
+An overview of the hardware's connectivity.
+
+- [[[[file:Docs/Network_Configuration.org]]]]
+
+Contains instructions on how to setup Raspberry Pi to automatically connect to a wireless network with a static IP.
+
+- [[[[file:Docs/TW_Extra_Functions.org]]]]
+
+Description of the extra functions used in TiddlyWiki.
+
+** extra_TW_files
+
+Contains the extra files that TW needs to gain Socket.io functionality.
+
+*** tiddlers
+
+- [[[[file:extra_TW_files/tiddlers/$__myJS_include_socket.io.tid]]]]
+
+Tiddler with a JS script to include Socket.io.js.
+
+- [[[[file:extra_TW_files/tiddlers/$__myJS_tiddlySocket.tid]]]]
+
+Tiddler with a JS script to include a custom JS function.
+The function called is [[[[file:webosc/public/js/tiddlySocket.js]]]] and it was used in the Secret School project to alter the URL. It will probably need to change.
+
+*** widgets
+
+- [[[[file:extra_TW_files/widgets/action-navigate2.js]]]]
+
+This file provides specific navigation functionality used in the Secret School project, which is probably not needed in this project. For more info, see the Docs.
+
+- [[[[file:extra_TW_files/widgets/action-SocketSend.js]]]]
+
+This file enables sending data to the server using Socket.io. The related function requires some data that will need to change for the needs of this project.
+
+** remoteServer
+
+Contains all the stuff that are needed to run remotely.
+
+/Under Construction/
+
+- [[[[file:remoteServer/findIP.js]]]]
+
+An attempt to use Node.js to monitor the external IP and inform the server about any changes. It is not working as it should.
+
+- [[[[file:remoteServer/getIP.py]]]]
+
+Using Python to monitor the external IP at a given time interval and inform SuperCollider of any changes.
+
+- [[[[file:remoteServer/mcp_read_send_osc.py]]]]
+
+This Python script reads the data from the ADC chip and sends it as an OSC message to SuperCollider. This is to be run on the four Raspberry Pis. Note that the IP used in OSC messaging will have to change manually.
+
+** webosc
+
+The folder containing the Node.js server.
+
+/Under Construction/
+
+- [[[[file:webosc/config.json]]]]
+
+File containing OSC and HTML ports and addresses.
+
+- [[[[file:webosc/index.js]]]]
+
+The Node.js server. Except for serving the homepage, it contains functions to traffic OSC messages between the webpage and SuperCollider.
+- /Note that it is not ready yet. The functions need to change according to the final needs of the project./
+
+** public
+
+Here is the home folder of the website. It will contain the homepage (as =index.html=). It also contains a folder with the JavaScript functions that are called by the extra tiddlers.
+
+/Under Construction/
