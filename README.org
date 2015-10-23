@@ -8,7 +8,7 @@ Contains various pieces of documentation:
 
 Contains information about autostarting applications in Raspberry Pi in various ways.
 
-- [[file:Docs/Components_Conections.org]]
+- [[file:Docs/Components_Connections.org]]
 
 An overview of the hardware's connectivity.
 
