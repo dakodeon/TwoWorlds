@@ -26,7 +26,7 @@ Contains the extra files that TW needs to gain Socket.io functionality.
 
 *** tiddlers
 
-- [[file:extra_TW_files/tiddlers/$__myJS_include socket.io.tid]]
+- [[file:extra_TW_files/tiddlers/$__myJS_include_socket.io.tid]]
 
 Tiddler with a JS script to include Socket.io.js.
 
