@@ -4,7 +4,7 @@
 
 Contains various pieces of documentation:
 
-- file:Docs/About_AutoStart.org
+- [[file:Docs/About_AutoStart.org]]
 
 Contains information about autostarting applications in Raspberry Pi in various ways.
 
