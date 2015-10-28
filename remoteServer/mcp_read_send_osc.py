@@ -8,16 +8,25 @@
 
 import OSC # OSC library
 import spidev # SPI library
+import threading # threading library
 from time import sleep # sleep function
 
 ### OSC CONFIGURATION
 
 # OSC information
-addr = "192.168.77.19"
-port = 57120
+addr = "192.168.77.19" # remote address
+port = 57120 # remote port
 client = OSC.OSCClient()
+server = OSC.OSCServer( ('192.168.77.21', 7000) )
+# add server handlers
+server.addDefaultHandlers()
 
-# Connect to the OSC client
+# Start the server
+st = threading.Thread( target = server.serve_forever )
+st.start()
+
+# Connect to the remote and local server
+client.setServer( server )
 client.connect( (addr, port) )
 print "OSC client connected at " + addr + ", port " + str(port)
 print "Sending confirmation message now..."
@@ -46,13 +55,10 @@ def getAdc(channel):
     # Check if it is a valid channel
     if((channel > 3) or (channel < 0)):
         return -1
-    
     # Perform SPI transaction and store returned bits in r
     r = spi.xfer2([1, (8+channel) << 4, 0])
-    
     # Extract the data received in r
     adcOut = ((r[1]&3) << 8) + r[2]
-    
     return adcOut
 
 # Normalize function
@@ -73,25 +79,30 @@ try:
         # Read the data from the sensors
         data1 = getAdc(chan[0])
         data2 = getAdc(chan[1])
-        
+        #
         # Constrain the readings within stable range
         # data1 = normalize(data1, lowLimit, highLimit)
         # data2 = normalize(data2, lowLimit, highLimit)
-        
+        #
         # Post some results (every one second)
         if cnt % 20 == 0:
             print("Channel 1: {0:4d}  ||  Channel 2: {1:4d}".format(data1, data2))
         cnt += 1
-        
         # Send OSC
         msg = OSC.OSCMessage()
         msg.setAddress("/sensors")
         msg.append(data1)
         msg.append(data2)
         client.send(msg)
-        
         # Wait till next loop
         sleep(0.05)
 
 except KeyboardInterrupt:
     print "\nNow quitting..."
+
+finally:
+    print "\nClosing OSC server..."
+    server.close()
+    print "Waiting for sever thread to finish..."
+    st.join()
+    print "Done!"
