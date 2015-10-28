@@ -2,7 +2,6 @@ var colors = require('colors');
 var express = require('express');
 var osc = require('osc-min');
 var udp = require("dgram");
-var publicIp = require('public-ip');
 
 var config = require("./config.json");
 
@@ -10,7 +9,6 @@ var app = express();
 
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var dns = require('dns');
 
 var oscListener;
 
@@ -20,29 +18,10 @@ var clientsConnected = 0;
 
 app.use(express.static(__dirname + '/public'));
 
+// *** Create the OSC emmiter
 oscEmmiter = udp.createSocket("udp4");
 
-publicIp.v4(function (err, ip) {
-    console.log('My IP is ' + ip);
-    // dns.lookup('larigot.avarts.ionio.gr', function onLookup(err, addresses, family) {
-        // console.log('Resolving address...');
-        // config.osc.address = addresses;
-        // console.log('The IP address is ' + config.osc.address);
-        var oscMsg = {
-            address: '/ip',
-            args: [
-                ip
-            ]
-        };
-        oscMsg = osc.toBuffer(oscMsg);
-        oscEmmiter.send(oscMsg, 0, oscMsg.length, config.osc.port.out, config.osc.address);
-    // });
-});
-
-
-
-
-
+// *** Create the OSC listener
 oscListener = udp.createSocket("udp4", function(buf, rinfo) {
     
     var msg = osc.fromBuffer(buf);
@@ -60,7 +39,7 @@ oscListener = udp.createSocket("udp4", function(buf, rinfo) {
         config.osc.address = msg.args[0].value;
         console.log("The IP changed to: " + config.osc.address);
         var oscReply = {
-	    address: '/gotit',
+	    address: '/ip_changed',
 	    args: [
 		"Hello, SC"
 	    ]
@@ -76,6 +55,7 @@ oscListener = udp.createSocket("udp4", function(buf, rinfo) {
 
 oscListener.bind(config.osc.port.in);
 
+// *** When there is a user connection, start receiving from Socket.io
 io.on('connection', function (websocket) {
 
     // *** post connection info
@@ -83,41 +63,26 @@ io.on('connection', function (websocket) {
     clientsConnected++;
     io.sockets.emit('users', clientsConnected);
 
-    // *** Receive info from tiddlywiki
-    websocket.on('tiddler info', function (msg) {
-	console.log(websocket.id + " | " + msg.type + " | " + msg.val + " | " + msg.url);
+    // *** Receive a sound name from tiddlywiki
+    websocket.on('sound name', function (msg) {
+        // *** Print out the received data
+	console.log(websocket.id + " | " + msg.val);
 
-	// *** Determine if the value of the message refers to keyword or title and send the according message to SC
-	if (msg.type == "key") {
+        // *** Make OSC
+        var infosc = {
+            address: '/sound_name',
+            args: [
+                websocket.id,
+                msg.val
+            ]
+        };
 
-	    // *** Make the info a keyword OSC
-	    var infosc = {
-		address: '/tiddlyKey',
-		args: [
-		    websocket.id,
-		    msg.val,
-		    msg.url
-		]
-	    };
-	}
-	else if (msg.type == "title") {
-
-	    // *** Make the info a title OSC
-	    var infosc = {
-		address: '/tiddlyTitle',
-		args: [
-		    websocket.id,
-		    msg.val,
-		    msg.url
-		]
-	    };
-	}
-	else { console.log("Error: Invalid type!!!"); }
-	
+        // *** Send OSC
 	infosc = osc.toBuffer(infosc);
 	oscEmmiter.send(infosc, 0, infosc.length, config.osc.port.out, config.osc.address);
     });
-    
+
+    // *** I don't think this is used anywhere, just keeping it to be sure
     websocket.on('osc', function (msg) {
         var buf = osc.toBuffer(msg); // Must add a  real buffer. Check also JSON decoding.
 	// io.sockets.emit('message', "Data"); // test tiddly connection
@@ -130,16 +95,15 @@ io.on('connection', function (websocket) {
         io.sockets.emit('users', clientsConnected);
     });
 
-
 });
 
 http.listen(config.http.port.in, function () {
-    console.log(colors.rainbow("The Secret School main server: " + config.http.port.in));
+    console.log(colors.rainbow("Two Worlds main server: " + config.http.port.in));
 });
 
 process.on('exit', function(code) {
     oscListener.close();
     oscEmmiter.close();
     http.close();
-    console.log(colors.rainbow("Quitting Secret School"));
+    console.log(colors.rainbow("Quitting Two Worlds server"));
 });

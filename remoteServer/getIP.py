@@ -18,7 +18,6 @@ timeInt = 3
 
 print "My IP is " + myIP
 
-
 while True:
     start = time.time()
     ip = ipgetter.myip()
@@ -34,6 +33,6 @@ while True:
             client.send(msg)
     
     # Wait some time
-    print "Here, debugger: " + myIP + " || time: " + str(time.time() - start)
+    print "My IP: " + myIP + " || time: " + str(time.time() - start)
     time.sleep(timeInt)
 

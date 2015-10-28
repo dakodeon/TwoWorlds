@@ -3,9 +3,7 @@ title: $:/core/modules/widgets/action-socketSend.js
 type: application/javascript
 module-type: widget
 
-Action widget to send info via Socket.io (Secret School)
-Usage: type determines if the value is a keyword or not. Accepted types: "key" and "title"
-
+Action widget to send info via Socket.io
 
 \*/
 (function(){
@@ -15,7 +13,7 @@ Usage: type determines if the value is a keyword or not. Accepted types: "key" a
 "use strict";
 
 var Widget = require("$:/core/modules/widgets/widget.js").widget;
-    
+
 var SocketWidget = function(parseTreeNode,options) {
     this.initialise(parseTreeNode,options);
 };
@@ -38,7 +36,6 @@ Compute the internal state of the widget
 */
 SocketWidget.prototype.execute = function() {
     this.actionTo = this.getAttribute("$val");
-    this.actionType = this.getAttribute("$type");
 };
 
 /*
@@ -46,7 +43,7 @@ Refresh the widget by ensuring our attributes are up to date
 */
 SocketWidget.prototype.refresh = function(changedTiddlers) {
     var changedAttributes = this.computeAttributes();
-    if(changedAttributes["$val"] || changedAttributes["$type"]) {
+    if(changedAttributes["$val"]) {
 	this.refreshSelf();
 	return true;
     }
@@ -61,12 +58,10 @@ SocketWidget.prototype.invokeAction = function(triggeringWidget,event) {
     // *** Make an oblect message and send it to the Server
 
     var msg = {
-	type: this.getAttribute("$type"),
-	val: this.getAttribute("$val"),
-	url: window.location.href
-    }
+	val: this.getAttribute("$val")
+    };
     
-    socket.emit('tiddler info', msg);
+    socket.emit('sound name', msg);
 
     return true; // Action was invoked
 };
