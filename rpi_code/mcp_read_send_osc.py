@@ -14,10 +14,10 @@ from time import sleep # sleep function
 ### OSC CONFIGURATION
 
 # OSC information
-addr = "192.168.77.19" # remote address
+addr = "192.168.8.151" # remote address
 port = 57120 # remote port
 client = OSC.OSCClient()
-server = OSC.OSCServer( ('192.168.77.21', 7000) )
+server = OSC.OSCServer( ('192.168.8.111', 7000) ) # the local address
 # add server handlers
 server.addDefaultHandlers()
 
