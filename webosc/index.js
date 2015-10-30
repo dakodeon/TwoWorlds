@@ -45,7 +45,12 @@ oscListener = udp.createSocket("udp4", function(buf, rinfo) {
 		"Hello, SC"
 	    ]
 	};
-        fs.appendFile('testfile.txt', 'Got message from ' + config.osc.address + "\n", function(err) {
+        var obj = {
+            ip: config.osc.address,
+            keywords: 'the_keyword',
+            soundname: 'the_soundname'
+        };
+        fs.appendFile('testfile.json', JSON.stringify(obj) + "\n", function(err) {
             if (err) return console.log(err);
             console.log("Wrote to file testfile.txt");
         });
