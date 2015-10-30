@@ -2,6 +2,7 @@ var colors = require('colors');
 var express = require('express');
 var osc = require('osc-min');
 var udp = require("dgram");
+var fs = require("fs");
 
 var config = require("./config.json");
 
@@ -44,7 +45,10 @@ oscListener = udp.createSocket("udp4", function(buf, rinfo) {
 		"Hello, SC"
 	    ]
 	};
-        
+        fs.writeFile('testfile.txt', 'Got message from ' + config.osc.address, function(err) {
+            if (err) return console.log(err);
+            console.log("Wrote to file testfile.txt");
+        });
         oscReply = osc.toBuffer(oscReply);
         oscEmmiter.send(oscReply, 0, oscReply.length, config.osc.port.out, config.osc.address);
     }
