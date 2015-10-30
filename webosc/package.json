@@ -23,6 +23,7 @@
   "dependencies": {
     "colors": "1.0.3",
     "express": "4.10.1",
+    "jsonfile": "^2.2.3",
     "osc-min": "0.2.0",
     "socket.io": "1.2.0"
   }

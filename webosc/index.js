@@ -2,9 +2,10 @@ var colors = require('colors');
 var express = require('express');
 var osc = require('osc-min');
 var udp = require("dgram");
-var fs = require("fs");
+var jfile = require("jsonfile");
 
 var config = require("./config.json");
+var twData = config.data;
 
 var app = express();
 
@@ -35,6 +36,16 @@ oscListener = udp.createSocket("udp4", function(buf, rinfo) {
 	}
     }
 
+    // *** Write to .JSON file --- SWITCH TO WEBSOCKET
+    else if (msg.address == "/writefile") {
+        var time = new Date().getTime();
+        twData.entries.unshift({ "timestamp":time, "sound":msg.args[0].value, "key":msg.args[1].value });
+        
+        jfile.writeFile("output_file.json", twData, function (err) {
+            console.error(err);
+        });
+        console.log("Updated test.json");
+    }
     // *** Change the IP address
     else if (msg.address == "/ip") {
         config.osc.address = msg.args[0].value;
@@ -45,20 +56,9 @@ oscListener = udp.createSocket("udp4", function(buf, rinfo) {
 		"Hello, SC"
 	    ]
 	};
-        var obj = {
-            ip: config.osc.address,
-            keywords: 'the_keyword',
-            soundname: 'the_soundname'
-        };
-        fs.appendFile('testfile.json', JSON.stringify(obj) + "\n", function(err) {
-            if (err) return console.log(err);
-            console.log("Wrote to file testfile.txt");
-        });
+        
         oscReply = osc.toBuffer(oscReply);
         oscEmmiter.send(oscReply, 0, oscReply.length, config.osc.port.out, config.osc.address);
-    }
-    else if (msg.address == "/gotit") {
-        console.log(msg.args[0].value);
     }
 });
 
