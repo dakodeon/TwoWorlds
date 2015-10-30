@@ -35,7 +35,8 @@ SocketWidget.prototype.render = function(parent,nextSibling) {
 Compute the internal state of the widget
 */
 SocketWidget.prototype.execute = function() {
-    this.actionTo = this.getAttribute("$val");
+    this.actionTo = this.getAttribute("$sound");
+    this.actionTo = this.getAttribute("$key");
 };
 
 /*
@@ -43,7 +44,7 @@ Refresh the widget by ensuring our attributes are up to date
 */
 SocketWidget.prototype.refresh = function(changedTiddlers) {
     var changedAttributes = this.computeAttributes();
-    if(changedAttributes["$val"]) {
+    if(changedAttributes["$sound"] || changedAttributes["$key"]) {
 	this.refreshSelf();
 	return true;
     }
@@ -58,10 +59,11 @@ SocketWidget.prototype.invokeAction = function(triggeringWidget,event) {
     // *** Make an oblect message and send it to the Server
 
     var msg = {
-	val: this.getAttribute("$val")
+        sound: this.getAttribute("$sound"),
+	key: this.getAttribute("$key")
     };
     
-    socket.emit('sound name', msg);
+    socket.emit('sound info', msg);
 
     return true; // Action was invoked
 };

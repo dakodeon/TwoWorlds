@@ -44,7 +44,7 @@ oscListener = udp.createSocket("udp4", function(buf, rinfo) {
         jfile.writeFile("output_file.json", twData, function (err) {
             console.error(err);
         });
-        console.log("Updated test.json");
+        console.log("Updated output_file.json");
     }
     // *** Change the IP address
     else if (msg.address == "/ip") {
@@ -72,23 +72,31 @@ io.on('connection', function (websocket) {
     clientsConnected++;
     io.sockets.emit('users', clientsConnected);
 
-    // *** Receive a sound name from tiddlywiki
-    websocket.on('sound name', function (msg) {
+    // *** Receive sound info from tiddlywiki
+    websocket.on('sound info', function (msg) {
         // *** Print out the received data
-	console.log(websocket.id + " | " + msg.val);
+	console.log("Socket ID: " + websocket.id + " | Sound: " + msg.sound + " | Keyword: " + msg.key);
 
-        // *** Make OSC
-        var infosc = {
-            address: '/sound_name',
-            args: [
-                websocket.id,
-                msg.val
-            ]
-        };
+        var time = new Date().getTime();
+        twData.entries.unshift({ "timestamp":time, "sound":msg.sound, "key":msg.key });
+        
+        jfile.writeFile("output_file.json", twData, function (err) {
+            console.error(err);
+        });
+        console.log("Updated output_file.json");
+        
+        // // *** Make OSC
+        // var infosc = {
+        //     address: '/sound_name',
+        //     args: [
+        //         websocket.id,
+        //         msg.val
+        //     ]
+        // };
 
-        // *** Send OSC
-	infosc = osc.toBuffer(infosc);
-	oscEmmiter.send(infosc, 0, infosc.length, config.osc.port.out, config.osc.address);
+        // // *** Send OSC
+	// infosc = osc.toBuffer(infosc);
+	// oscEmmiter.send(infosc, 0, infosc.length, config.osc.port.out, config.osc.address);
     });
 
     // *** I don't think this is used anywhere, just keeping it to be sure
