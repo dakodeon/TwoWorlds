@@ -1,0 +1,4 @@
+#!/bin/bash
+# start the webosc server
+
+sudo python /home/pi/python_code/mcp_read_send_osc.py

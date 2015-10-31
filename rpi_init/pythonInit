@@ -1,0 +1,34 @@
+ #! /bin/sh
+# /etc/init.d/pirateboxInit
+
+### BEGIN INIT INFO
+# Provides:          pirateboxNode
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Simple script to start a program at boot
+# Descriptiom:	     The piratebox section of the Secret school Project
+### END INIT INFO
+
+# If you want a command to always run, put it here
+
+# Carry out specific functions when asked to by the system
+case "$1" in
+  start)
+    echo "Starting python script"
+    # run application you want to start
+    /home/pi/bin/pythonStart
+    ;;
+  stop)
+    echo "Stopping python script"
+    # kill application you want to stop
+    killall python
+    ;;
+  *)
+    echo "Usage: /etc/init.d/pythonInit {start|stop}"
+    exit 1
+    ;;
+esac
+
+exit 0 

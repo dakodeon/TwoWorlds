@@ -64,7 +64,7 @@ SocketWidget.prototype.invokeAction = function(triggeringWidget,event) {
     };
     
     socket.emit('sound info', msg);
-    alert("Sent keyword " + $key + " from sound " + $sound + " to installation.");
+    alert("Sent keyword " + this.getAttribute("$key") + " from sound " + this.getAttribute("$sound") + " to installation.");
     return true; // Action was invoked
 };
     
