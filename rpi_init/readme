@@ -1,0 +1,7 @@
+To autostart the python script:
+
+1. Place the file pythonStart at /home/pi/bin/ (if /bin does not exist create it)
+2. Place the file pythonInit at /etc/init.d/
+3. Make sure that both files are executable
+4. Run the command "sudo update-rc.d pythonInit defaults"
+5. To manually start the script run "sudo /etc/init.d/pythonInit start"
