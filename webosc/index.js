@@ -41,7 +41,7 @@ oscListener = udp.createSocket("udp4", function(buf, rinfo) {
         var time = new Date().getTime();
         twData.entries.unshift({ "timestamp":time, "sound":msg.args[0].value, "key":msg.args[1].value });
         
-        jfile.writeFile("output_file.json", twData, function (err) {
+        jfile.writeFile("/Users/Shared/TwoWorlds/webosc/output_file.json", twData, function (err) {
             console.error(err);
         });
         console.log("Updated output_file.json");
